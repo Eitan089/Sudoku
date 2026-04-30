@@ -1,0 +1,46 @@
+#menu {
+  text-align: center;
+  font-size: 50px;
+}
+button {
+  display: block;
+  padding: 10px 20px;
+  margin: auto;
+  font-size: 30px;
+  cursor: pointer;
+}
+#subtitle {
+  text-align: center;
+  font-size: 30px;
+}
+#board {
+  display: grid;
+  grid-template-columns: repeat(9, 40px);
+  margin: 20px auto;
+  gap: 0;
+  width: max-content;
+}
+.cell {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  font-size: 18px;
+  border: 1px solid #999;
+}
+.cell input {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  font-size: 18px;
+  border: none;
+}
+.bold-right {
+  border-right: 3px solid black;
+}
+.bold-bottom {
+  border-bottom: 3px solid black;
+}
+.prefilled {
+  background-color: #eee;
+  font-weight: bold;
+}
