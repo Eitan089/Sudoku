@@ -26,6 +26,11 @@ var userBoard = [
 ];
 var solution = [];
 var selectedCell = null;
+
+function getCellEl(row, col) {
+  var allCells = document.querySelectorAll(".cell");
+  return allCells[row * 9 + col];
+}
 function renderGrid() {
   var gridEl = document.getElementById("grid");
   gridEl.innerHTML = "";
@@ -33,22 +38,17 @@ function renderGrid() {
   for (var r = 0; r < 9; r++) {
     for (var c = 0; c < 9; c++) {
       var cell = document.createElement("div");
-      cell.className = "cell";
-      cell.dataset.row = r;
-      cell.dataset.col = c;
-      if (c === 2 || c === 5) {
-        cell.classList.add("thick-right");
-      }
-      if (r === 2 || r === 5) {
-        cell.classList.add("thick-bottom");
-      }
+      var classes = "cell";
+      if (c === 2 || c === 5) classes = classes + " thick-right";
+      if (r === 2 || r === 5) classes = classes + " thick-bottom";
       if (puzzle[r][c] !== 0) {
         cell.textContent = puzzle[r][c];
-        cell.classList.add("given");
+        classes = classes + " given";
       } else if (userBoard[r][c] !== 0) {
         cell.textContent = userBoard[r][c];
-        cell.classList.add("user-input");
+        classes = classes + " user-input";
       }
+      cell.className = classes;
       cell.addEventListener(
         "click",
         (function (row, col) {
@@ -67,32 +67,37 @@ function onCellClick(r, c) {
   highLightCells(r, c);
 }
 function highLightCells(row, col) {
-  document.querySelectorAll(".cell").forEach(function (el) {
-    el.classList.remove("selected", "highlight");
-  });
-
   var selectedVal =
     puzzle[row][col] !== 0 ? puzzle[row][col] : userBoard[row][col];
+  var allCells = document.querySelectorAll(".cell");
 
-  document.querySelectorAll(".cell").forEach(function (el) {
-    var r = parseInt(el.dataset.row);
-    var c = parseInt(el.dataset.col);
+  for (var r = 0; r < 9; r++) {
+    for (var c = 0; c < 9; c++) {
+      var el = allCells[r * 9 + c];
 
-    var sameRow = r === row;
-    var sameCol = c === col;
-    var sameBox =
-      Math.floor(r / 3) === Math.floor(row / 3) &&
-      Math.floor(c / 3) === Math.floor(col / 3);
+      var sameRow = r === row;
+      var sameCol = c === col;
+      var sameBox =
+        Math.floor(r / 3) === Math.floor(row / 3) &&
+        Math.floor(c / 3) === Math.floor(col / 3);
+      var cellVal = puzzle[r][c] !== 0 ? puzzle[r][c] : userBoard[r][c];
+      var sameNumber = selectedVal !== 0 && cellVal === selectedVal;
 
-    var cellVal = puzzle[r][c] !== 0 ? puzzle[r][c] : userBoard[r][c];
+      var classes = "cell";
+      if (c === 2 || c === 5) classes = classes + " thick-right";
+      if (r === 2 || r === 5) classes = classes + " thick-bottom";
+      if (puzzle[r][c] !== 0) classes = classes + " given";
+      else if (userBoard[r][c] !== 0) classes = classes + " user-input";
 
-    var sameNumber = selectedVal !== 0 && cellVal === selectedVal;
-    if (r === row && c === col) {
-      el.classList.add("selected");
-    } else if (sameRow || sameCol || sameBox || sameNumber) {
-      el.classList.add("highlight");
+      if (r === row && c === col) {
+        classes = classes + " selected";
+      } else if (sameRow || sameCol || sameBox || sameNumber) {
+        classes = classes + " highlight";
+      }
+
+      el.className = classes;
     }
-  });
+  }
 }
 document.addEventListener("keydown", function (e) {
   if (!selectedCell) return;
@@ -180,32 +185,72 @@ function fillGrid(grid) {
   return true;
 }
 function generatePuzzle() {
-  var solved = [];
-  for (var i = 0; i < 9; i++) {
-    solved.push([0, 0, 0, 0, 0, 0, 0, 0, 0]);
-  }
+  var solved = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ];
   fillGrid(solved);
-  solution = [];
-  for (var r = 0; r < 9; r++) {
-    solution.push(solved[r].slice());
-  }
+
+  solution = [
+    solved[0].slice(),
+    solved[1].slice(),
+    solved[2].slice(),
+    solved[3].slice(),
+    solved[4].slice(),
+    solved[5].slice(),
+    solved[6].slice(),
+    solved[7].slice(),
+    solved[8].slice(),
+  ];
+
   var cells = [];
-  for (var i = 0; i < 81; i++) cells.push(i);
+  for (var i = 0; i < 81; i++) {
+    var cells = [
+      0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+      21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
+      39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56,
+      57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74,
+      75, 76, 77, 78, 79, 80,
+    ];
+  }
   shuffle(cells);
 
-  puzzle = [];
-  for (var r = 0; r < 9; r++) {
-    puzzle.push(solved[r].slice());
-  }
+  puzzle = [
+    solved[0].slice(),
+    solved[1].slice(),
+    solved[2].slice(),
+    solved[3].slice(),
+    solved[4].slice(),
+    solved[5].slice(),
+    solved[6].slice(),
+    solved[7].slice(),
+    solved[8].slice(),
+  ];
+
   for (var k = 0; k < 46; k++) {
     var row = Math.floor(cells[k] / 9);
     var col = cells[k] % 9;
     puzzle[row][col] = 0;
   }
-  userBoard = [];
-  for (var r = 0; r < 9; r++) {
-    userBoard.push([0, 0, 0, 0, 0, 0, 0, 0, 0]);
-  }
+
+  userBoard = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ];
 }
 var puzzle = [];
 var userBoard = [];
@@ -214,29 +259,24 @@ var selectedCell = null;
 
 function newGame() {
   function checkBoard() {
-    document.querySelectorAll(".cell").forEach(function (el) {
-      el.classList.remove("error");
-    });
+    renderGrid();
     var errors = 0;
     for (var r = 0; r < 9; r++) {
       for (var c = 0; c < 9; c++) {
         if (userBoard[r][c] !== 0 && userBoard[r][c] !== solution[r][c]) {
-          var el = document.querySelector(
-            `.cell[data-row="${r}"][data-col="${c}"]`,
-          );
-          el.classList.add("error");
+          var el = getCellEl(r, c);
+          el.className = el.className + " error";
           errors++;
         }
       }
     }
     var msg = document.getElementById("message");
-    console.log(isBoardComplete());
     if (isBoardComplete()) {
-      msg.textContent = "Congratulations! You solved it!";
+      msg.textContent = "You solved it!";
     } else if (errors === 0) {
-      msg.textContent = "No mistakes found";
+      msg.textContent = "No mistakes found!";
     } else {
-      msg.textContent = errors + " mistake(s) found";
+      msg.textContent = errors + " mistake(s) found.";
     }
   }
   function isBoardComplete() {
@@ -256,29 +296,36 @@ function newGame() {
 }
 
 function checkBoard() {
-  document.querySelectorAll(".cell").forEach(function (el) {
-    el.classList.remove("error");
-  });
+  for (var r = 0; r < 9; r++) {
+    for (var c = 0; c < 9; c++) {
+      var el = getCellEl(r, c);
+      var classes = "cell";
+      if (c === 2 || c === 5) classes = classes + " thick-right";
+      if (r === 2 || r === 5) classes = classes + " thick-bottom";
+      if (puzzle[r][c] !== 0) classes = classes + " given";
+      else if (userBoard[r][c] !== 0) classes = classes + " user-input";
+      el.className = classes;
+    }
+  }
+
   var errors = 0;
   for (var r = 0; r < 9; r++) {
     for (var c = 0; c < 9; c++) {
       if (userBoard[r][c] !== 0 && userBoard[r][c] !== solution[r][c]) {
-        var el = document.querySelector(
-          `.cell[data-row="${r}"][data-col="${c}"]`,
-        );
-        el.classList.add("error");
+        var el = getCellEl(r, c);
+        el.className = el.className + " error";
         errors++;
       }
     }
   }
+
   var msg = document.getElementById("message");
-  console.log(isBoardComplete());
   if (isBoardComplete()) {
-    msg.textContent = "Congratulations! You solved it!";
+    msg.textContent = "You solved it!";
   } else if (errors === 0) {
-    msg.textContent = "No mistakes found";
+    msg.textContent = "No mistakes found!";
   } else {
-    msg.textContent = errors + " mistake(s) found";
+    msg.textContent = errors + " mistake(s) found.";
   }
 }
 function isBoardComplete() {
