@@ -1,3 +1,4 @@
+//נתונים של הלוחות השונים עם הפאזלים והפתרונות שלהם
 var boards = {
   easy: {
     puzzle: [
@@ -85,12 +86,14 @@ var boards = {
   },
 };
 
+//משתנים גלובליים לאחסון הלוח הנוכחי, הפתרון, לוח המשתמש והבחירה הנוכחית
 var puzzle = [];
 var solution = [];
 var userBoard = [];
 var selectedRow = -1;
 var selectedCol = -1;
 
+//פונקציה שמתחילה את המשחק על פי רמת הקושי שנבחרה ומאתחלת את הלוח והמשתנים
 function startGame(difficulty) {
   var board = boards[difficulty];
   puzzle = board.puzzle;
@@ -114,12 +117,14 @@ function startGame(difficulty) {
   renderGrid();
 }
 
+//פונקציה שמחזירה את המשתמש למסך ההתחלה ומאפס את הלוח
 function newGame() {
   document.getElementById("game-screen").style.display = "none";
   document.getElementById("start-screen").style.display = "flex";
   document.getElementById("message").textContent = "";
 }
 
+//פונקציה שמציגה את הלוח על המסך ומטפלת בבחירת תאים
 function renderGrid() {
   var grid = document.getElementById("grid");
   grid.innerHTML = "";
@@ -166,6 +171,7 @@ function renderGrid() {
   }
 }
 
+//הוספת אירוע מקלדת להזנת מספרים או מחיקת קלט
 document.addEventListener("keydown", function (e) {
   if (selectedRow === -1) {
     return;
@@ -184,7 +190,9 @@ document.addEventListener("keydown", function (e) {
   }
 });
 
+//בדיקת הלוח האם יש טעויות והאם המשחק הושלם
 function checkBoard() {
+  //ספירת טעויות בלוח המשתמש
   var errors = 0;
   for (var r = 0; r < 9; r++) {
     for (var c = 0; c < 9; c++) {
@@ -194,6 +202,7 @@ function checkBoard() {
     }
   }
 
+  //בדיקת השלמת המשחק על ידי השוואת הלוח הנוכחי לפתרון
   var complete = true;
   for (var r = 0; r < 9; r++) {
     for (var c = 0; c < 9; c++) {
@@ -203,6 +212,7 @@ function checkBoard() {
     }
   }
 
+  //הצגת הודעה למשתמש בהתאם למצב הלוח
   var msg = document.getElementById("message");
   if (complete) {
     msg.textContent = "you solved it";
